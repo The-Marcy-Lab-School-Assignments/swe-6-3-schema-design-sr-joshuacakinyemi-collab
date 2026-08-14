@@ -17,11 +17,11 @@ The table below stores data for a library's checkout system. Identify every norm
 
 **Your answer:**
 
-**Normalization Rule #2**: The genres columns do not store **atomic** values, making it harder to manage the database and to find the exact value through **query** search.
+**1NF**: The genres columns do not store **atomic** values, making it harder to manage the database and to find the exact value through **query** search or filtering.
 
-**Normalization Rule #3**: The table will cause a lot of **repetitive and redundant** data when updating data on a column, since some data repeat we would need to **update** each row of the data we want to update.
+**2NF and 3NF**: The table will cause a lot of **repetitive and redundant** data when updating data on a column, since some data repeat we would need to **update** each row of the data we want to update.
 
-**Solution**: The best way to fix the **schema** design is to make **multiple** tables that each serve a purpose. A **patron**'s table tells us details about each customer, and a **book**'s table tells us details about each book while changing the `checkout_id` values from `integer` to `status`.
+**Solution**: The best way to fix the **schema** design is to **split** the table into separate tables, each responsible for one thing. A **patron**'s table(`patron_name`, `email`),a **authors** table(`author_name`), a **books** table(`title`, `author_id`), a **book_genres**(`book_id`, `genres_id`) bridge table to handle the many-to-many relationship between books and genres, and lastly a **checkouts** table(`checkout_id`,`patron_id`,`book_id`, and a data to note when it was taken out).
 
 ---
 
@@ -42,7 +42,7 @@ What is referential integrity? How does PostgreSQL enforce it, and why does this
 
 **Your answer:**
 
-**Referential integrity** is when the database itself adds a **clause** to make sure that the value being added is real data. PostgreSQL **enforces** this by rejecting anything inserted that doesn't **exist** in the table.
+**Referential integrity** is to check if the **foreign key** column points to a existing row in the table it references. **PostgreSQL** checks every insert or update against the referenced table and **rejects** the operation if no matching row exists there. so when making the tables, PostgreSQL check for the **parent** before the **child** since the child need a **vaild** reference in order to be made, and vice versa in order to drop, PostgreSQL need to drop child before the parent.
 
 ---
 
@@ -52,6 +52,6 @@ Why does an association table need a `UNIQUE (col1, col2)` constraint on its two
 
 **Your answer:**
 
-When an association table has **two or more** foreign key columns, it might make a row with the same data as a **previous** row. Adding a `UNIQUE` constraint, it prevents two rows from sharing the same `col1` and `col2` pair. Making the constraint a pair prevents the same `col1` from being in the same `col2` twice
+When an association table has **two or more** foreign key columns, it might make a row with the same data as a **previous** row. Adding a `UNIQUE` constraint, it prevents two rows from sharing the same `col1` and `col2` pair. Making the constraint a pair prevents duplicate row from appearing twice. Making each column individually `UNIQUE` would not work, because in a normal **many-to-many** relationship each foreign key value is supposed to repeat across multiple rows.
 
 ---
